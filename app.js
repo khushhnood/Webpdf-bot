@@ -58,7 +58,11 @@ bot.on('text',async(ctx)=>{
     }
 })
 
+bot.launch();
 
+app.get('/pdfbot',(req,res)=>{
+    res.send("<html><h1>BOT SERVINCE RUNNING</h1></html>")
+})
 app.listen(PORT,()=>{
     console.log(`Server runnng on ${PORT}`)
 })
