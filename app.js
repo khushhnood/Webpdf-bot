@@ -2,6 +2,8 @@ const app  = require('express')();
 const puppet = require('puppeteer')
 const dotenv = require('dotenv')
 const {Telegraf} = require('telegraf')
+const fs = require('fs');
+const path = require('path');
 dotenv.config();
 
 const PORT = process.env.PORT || 5000;
@@ -29,8 +31,12 @@ bot.start((ctx) =>{
 bot.help((ctx) => ctx.reply('type any valid url link.'))
 bot.on('text',async(ctx)=>{
     let url = ctx.update.message.text;
+    let todayDate = new Date();
+    //let pdfurl = path.join(__dirname,'files',todayDate.getTime()+'.pdf')
+
     try {
        if(validate(url)){
+           console.log(`url : ${url}`)
         ctx.reply('Preparing pdf')
         const browser = await puppet.launch();
         const page = await browser.newPage();
@@ -49,7 +55,26 @@ bot.on('text',async(ctx)=>{
                 format: "A4",
                 printBackground: true
         })
-        ctx.replyWithDocument(buff);
+        fs.writeFile(`${todayDate.getTime()}.pdf`,buff,(err)=>{
+            if(err){
+                console.log(`error i saving : ${err}`)
+            }else{
+                console.log("file saved")
+            }
+        })
+        
+        await browser.close();
+     
+        const sendfile = await ctx.replyWithDocument({source : `./${todayDate.getTime()}.pdf`,filename: `document.pdf`});
+        if(sendfile.document.file_id){
+
+                //console.log(sendfile)
+               fs.unlink(`${todayDate.getTime()}.pdf`,(err)=>{
+                   if(err)console.log(`error in delete: ${err}`);
+               })
+
+        
+        }
        }else{
            ctx.reply('This does not seems to be a valid link! Please provide a valid URL.');
        }
