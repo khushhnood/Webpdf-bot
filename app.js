@@ -94,7 +94,7 @@ bot.on("text", async (ctx) => {
 bot.launch();
 
 app.get("/pdfbot", (req, res) => {
-  res.send("<html><h1>BOT SERVICE RUNNING!!!</h1></html>");
+  res.send("<html><h1>BOT SERVICE RUNNING!</h1></html>");
 });
 
 
